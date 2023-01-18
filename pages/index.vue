@@ -1,5 +1,5 @@
 <template>
-プレビューデプロイの確認
+<div>プレビューデプロイの確認</div>
 </template>
 
 <script>
