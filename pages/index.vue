@@ -1,5 +1,5 @@
 <template>
-  <Tutorial/>
+  <div>developブランチ</div>
 </template>
 
 <script>
