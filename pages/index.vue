@@ -1,5 +1,5 @@
 <template>
-  <div>developブランチ</div>
+  <div>プレビューデプロイ</div>
 </template>
 
 <script>
