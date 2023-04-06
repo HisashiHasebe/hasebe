@@ -1,5 +1,5 @@
 <template>
-  <Tutorial/>
+  <div>確認</div>
 </template>
 
 <script>
