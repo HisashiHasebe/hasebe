@@ -1,5 +1,5 @@
 <template>
-  <Tutorial/>
+<div>プレビューデプロイの確認</div>
 </template>
 
 <script>
