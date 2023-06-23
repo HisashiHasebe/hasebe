@@ -67,27 +67,3 @@ export default {
     },
 }
 </script>
-
-<style scoped>
-form>div {
-    margin: 8px;
-    display: flex;
-    flex-direction: row;
-}
-
-form>div>* {
-    display: flex;
-    flex-direction: row;
-    flex-basis: 100px;
-}
-
-form>div>*:nth-child(1) {
-    flex: 0 0 100px;
-    padding-right: 8px;
-}
-
-form>div>*:nth-child(2) {
-    min-width: 0;
-    flex: 1 100 auto;
-}
-</style>
