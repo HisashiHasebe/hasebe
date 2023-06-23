@@ -25,13 +25,13 @@
 
                 <div>
                     <button type="submit">
-                        サインアップ
+                        Sign up
                     </button>
                 </div>
             </form>
         </div>
         <div v-else-if="presignupDone">
-            仮登録が完了しました。メールをご確認ください。
+            Pre-registration is complete. Please check your email.
         </div>
     </div>
 </template>
@@ -56,12 +56,12 @@ export default {
                     },
                 }
                 // post data
-                // 新規会員登録のリクエスト
+                // New Member Registration Request
                 await this.$axios.$post('/rcms-api/1/2step_member_invite', payload)
                 this.presignupDone = true
             } catch (e) {
                 console.error(e)
-                this.error = 'エラーが発生しました。'
+                this.error = 'An error has occurred.'
             }
         },
     },

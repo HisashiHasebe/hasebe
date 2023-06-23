@@ -9,20 +9,20 @@
                 <input v-model="otp" name="otp" type="text" placeholder="otp">
             </div>
             <button type="submit">
-                サインアップ
+                Sign up
             </button>
         </form>
         <div>
             <button @click.prevent="sendOTP">
-                認証コードを送付する
+                Send authentication code
             </button>
             <p v-if="sentOTP">
-                ワンタイムパスワードを送付しました。
+                One Time Password has been sent.
             </p>
         </div>
     </div>
     <div v-else-if="signupDone">
-        登録が完了しました。
+        Registration has been completed.
     </div>
 </template>
 

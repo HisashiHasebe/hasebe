@@ -6,11 +6,11 @@
     <form v-if="!preloginStatus" @submit.prevent="prelogin">
       <input v-model="email" name="email" type="email" placeholder="email" />
       <input v-model="password" name="password" type="password" placeholder="password" />
-      <button type="submit">ログイン</button>
+      <button type="submit">Login</button>
     </form>
     <form v-if="preloginStatus" @submit.prevent="login">
       <input v-model="otp" name="otp" type="otp" placeholder="otp" />
-      <button type="submit">送信</button>
+      <button type="submit">Submit</button>
     </form>
   </div>
 </template>
@@ -49,10 +49,10 @@ export default {
         await this.$axios.$post('/rcms-api/1/2step_pre_login', payload);
         this.Status = 'success';
         this.preloginStatus = true;
-        this.resultMessage = 'ワンタイムパスワードを送付しました。';
+        this.resultMessage = 'One Time Password has been sent.';
       } catch (error) {
         this.Status = 'failure';
-        this.resultMessage = 'ログインに失敗しました。';
+        this.resultMessage = 'Login failed.';
       }
     },
     async login() {
@@ -64,7 +64,7 @@ export default {
         };
         await this.$axios.$post('/rcms-api/1/2step_login', payload);
         this.Status = 'success';
-        this.resultMessage = 'ログインに成功しました。';
+        this.resultMessage = 'Login succeeded.';
       } catch (error) {
         this.Status = 'failure';
         this.resultMessage = error.response.data.errors[0].message
@@ -73,4 +73,3 @@ export default {
   },
 };
 </script>
-  
