@@ -85,7 +85,7 @@ jobs:
         with:
           webhook_url: "https://hasebe.g.kuroco.app/direct/menu/github/"
           webhook_secret: "7c0efe0b7bc988439947edb66434f459"
-          data: '{"single_zip":"1","domain":"hasebe.example.com","pr":"${{ github.event.issue.pull_request.url }}",  "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ steps.get_branch.outputs.sha }}"}'
+          data: '{"single_zip":"1","domain":"hasebe.g.kuroco-front.app","pr":"${{ github.event.issue.pull_request.url }}",  "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ steps.get_branch.outputs.sha }}"}'
           
   #for Push
   pushed_build:
@@ -141,4 +141,4 @@ jobs:
         with:
           webhook_url: "https://hasebe.g.kuroco.app/direct/menu/github/"
           webhook_secret: "7c0efe0b7bc988439947edb66434f459"
-          data: '{"single_zip":"1","domain":"hasebe.example.com", "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ github.sha }}"}'
+          data: '{"single_zip":"1","domain":"hasebe.g.kuroco-front.app", "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ github.sha }}"}'
