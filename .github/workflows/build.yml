@@ -8,11 +8,6 @@ on:
   workflow_dispatch:
 env:
   BASE_URL: ${{secrets.BASE_URL}}
-
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   # for Pull Request (exclude merged)
   pullreq_build:
@@ -23,69 +18,39 @@ jobs:
       - name: "Get branch name and sha"
         id: get_branch
         run: |
-          PR=$(curl -H "X-Kuroco-Auth: token 7c0efe0b7bc988439947edb66434f459" https://hasebe.g.kuroco.app/direct/menu/github/?pr=${{ github.event.issue.pull_request.url }})
+          PR=$(curl -H "Authorization: token 6058cc0d39746b2a6781d4fc2e2c70fd" https://hasebe.g.kuroco.app/direct/menu/github/?pr=${{ github.event.issue.pull_request.url }})
           echo "branch=$(echo $PR | jq -r '.ref')" >> $GITHUB_OUTPUT
           echo "sha=$(echo $PR | jq -r '.sha')" >> $GITHUB_OUTPUT
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
         with:
           ref: ${{ steps.get_branch.outputs.branch }}
-          fetch-depth: 0
-        continue-on-error: true
-      - name: Fallback checkout if branch not found
-        if: failure()
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.pull_request.head.ref || 'main' }}
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
-      - name: CI Cache
-        uses: actions/cache@v4
-        id: node_modules_cache_id
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref_name }}-${{ hashFiles('**/package-lock.json') }}
+          node-version: '16.x'
       - name: Install dependencies
-        if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
         run: npm ci
-
+      - name: Build
+        run: npm run build
       - name: Generate
         run: npm run generate
-      - name: Validate kuroco_front.json
-        run: |
-          if [ -f "./.output/public/kuroco_front.json" ]; then
-            echo "kuroco_front.json found"
-            # JSON形式の検証
-            if jq empty ./.output/public/kuroco_front.json; then
-              echo "kuroco_front.json is valid JSON"
-            else
-              echo "Error: kuroco_front.json is not valid JSON"
-              exit 1
-            fi
-          else
-            echo "Error: kuroco_front.json not found in public folder"
-            exit 1
-          fi
-      - name: Zip artifact for upload
-        run: cd ./.output/public && zip ../../dist.zip . -r
+        # - name: Zip artifact for upload
+        #  run: cd dist && zip ../dist.zip . -r
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.get_branch.outputs.sha }}-${{ github.run_id }}
-          path: dist.zip
-          retention-days: 1
+          path: dist
+          retention-days: 7
       - name: Wait for Artifact download
         run: sleep 15
       - name: Webhook
-        uses: diverta/workflow-webhook@v3
-        with:
+        uses: diverta/workflow-webhook@v2
+        env:
           webhook_url: "https://hasebe.g.kuroco.app/direct/menu/github/"
-          webhook_secret: "7c0efe0b7bc988439947edb66434f459"
-          data: '{"single_zip":"1","domain":"hasebe.example.com","pr":"${{ github.event.issue.pull_request.url }}",  "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ steps.get_branch.outputs.sha }}"}'
+          webhook_secret: "6058cc0d39746b2a6781d4fc2e2c70fd"
+          data: '{"single_zip":"0","domain":"hasebe.g.kuroco-front.app","pr":"${{ github.event.issue.pull_request.url }}",  "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ steps.get_branch.outputs.sha }}"}'
           
   #for Push
   pushed_build:
@@ -94,51 +59,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Use Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v3
         with:
-          node-version: '18.x'
-      - name: CI Cache
-        uses: actions/cache@v4
-        id: node_modules_cache_id
-        env:
-          cache-name: cache-node-modules
-        with:
-          path: '**/node_modules'
-          key: ${{ runner.os }}-build-${{ env.cache-name }}-${{ github.ref_name }}-${{ hashFiles('**/package-lock.json') }}
+          node-version: '16.x'
       - name: Install dependencies
-        if: ${{ steps.node_modules_cache_id.outputs.cache-hit != 'true' }}
         run: npm ci
-
+      - name: Build
+        run: npm run build
       - name: Generate
         run: npm run generate
-      - name: Validate kuroco_front.json
-        run: |
-          if [ -f "./.output/public/kuroco_front.json" ]; then
-            echo "kuroco_front.json found"
-            # JSON形式の検証
-            if jq empty ./.output/public/kuroco_front.json; then
-              echo "kuroco_front.json is valid JSON"
-            else
-              echo "Error: kuroco_front.json is not valid JSON"
-              exit 1
-            fi
-          else
-            echo "Error: kuroco_front.json not found in public folder"
-            exit 1
-          fi
-      - name: Zip artifact for upload
-        run: cd ./.output/public && zip ../../dist.zip . -r
+        # - name: Zip artifact for upload
+        #  run: cd dist && zip ../dist.zip . -r
       - name: Archive Production Artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ github.sha }}-${{ github.run_id }}
-          path: dist.zip
+          path: dist
           retention-days: 7
       - name: Webhook
-        uses: diverta/workflow-webhook@v3
-        with:
+        uses: diverta/workflow-webhook@v2
+        env:
           webhook_url: "https://hasebe.g.kuroco.app/direct/menu/github/"
-          webhook_secret: "7c0efe0b7bc988439947edb66434f459"
-          data: '{"single_zip":"1","domain":"hasebe.example.com", "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ github.sha }}"}'
+          webhook_secret: "6058cc0d39746b2a6781d4fc2e2c70fd"
+          data: '{"single_zip":"0","domain":"hasebe.g.kuroco-front.app", "repository":"${{ github.repository }}", "run_id":"${{ github.run_id }}", "hash":"${{ github.sha }}"}'
