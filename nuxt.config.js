@@ -46,6 +46,16 @@ export default {
     baseURL: process.env.BASE_URL
   },
 
+  // Static generation configuration
+  generate: {
+    // Explicitly list routes to ensure they are always generated
+    routes: [
+      '/cors-pdf-test',
+    ],
+    // Use index.html as SPA fallback so unknown routes are handled client-side
+    fallback: 'index.html',
+  },
+
   // Build Configuration: https://go.nuxtjs.dev/config-build
   build: {
   }
