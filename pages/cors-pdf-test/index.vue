@@ -55,7 +55,7 @@ export default {
       objectUrl: null,
     }
   },
-  beforeDestroy() {
+  beforeUnmount() {
     if (this.objectUrl) {
       URL.revokeObjectURL(this.objectUrl)
     }

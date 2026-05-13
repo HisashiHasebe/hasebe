@@ -14,7 +14,7 @@
     </form>
   </div>
 </template>
-  
+
 <script>
 export default {
   data() {
@@ -25,17 +25,17 @@ export default {
       Status: null,
       preloginStatus: false,
       resultMessage: null,
-    };
+    }
   },
   computed: {
     resultMessageColor() {
       switch (this.Status) {
         case 'success':
-          return 'green';
+          return 'green'
         case 'failure':
-          return 'red';
+          return 'red'
         default:
-          return '';
+          return ''
       }
     },
   },
@@ -45,14 +45,14 @@ export default {
         const payload = {
           email: this.email,
           password: this.password,
-        };
-        await this.$axios.$post('/rcms-api/1/2step_pre_login', payload);
-        this.Status = 'success';
-        this.preloginStatus = true;
-        this.resultMessage = 'One Time Password has been sent.';
+        }
+        await $fetch('/rcms-api/1/2step_pre_login', { method: 'POST', body: payload })
+        this.Status = 'success'
+        this.preloginStatus = true
+        this.resultMessage = 'One Time Password has been sent.'
       } catch (error) {
-        this.Status = 'failure';
-        this.resultMessage = 'Login failed.';
+        this.Status = 'failure'
+        this.resultMessage = 'Login failed.'
       }
     },
     async login() {
@@ -61,15 +61,15 @@ export default {
           email: this.email,
           password: this.password,
           otp: this.otp,
-        };
-        await this.$axios.$post('/rcms-api/1/2step_login', payload);
-        this.Status = 'success';
-        this.resultMessage = 'Login succeeded.';
+        }
+        await $fetch('/rcms-api/1/2step_login', { method: 'POST', body: payload })
+        this.Status = 'success'
+        this.resultMessage = 'Login succeeded.'
       } catch (error) {
-        this.Status = 'failure';
-        this.resultMessage = error.response.data.errors[0].message
+        this.Status = 'failure'
+        this.resultMessage = error.data?.errors?.[0]?.message
       }
     },
   },
-};
+}
 </script>
